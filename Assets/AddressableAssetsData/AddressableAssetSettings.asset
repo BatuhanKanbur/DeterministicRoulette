@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 12b52ba2ae88a054a8beb0cf1f9b1b59
   m_currentHash:
     serializedVersion: 2
-    Hash: 4cda03563ba449489f79a349af7c4146
+    Hash: 00000000000000000000000000000000
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_CatalogRequestsTimeout: 0
@@ -62,6 +62,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0106a8aa9bd99eb439356ec854cc0888, type: 2}
   - {fileID: 11400000, guid: 50c89ae590c24c24983cd00e5627068c, type: 2}
   - {fileID: 11400000, guid: cc03b6010e744734f948e032c7eea158, type: 2}
+  - {fileID: 11400000, guid: 34ef74b9109bc5d469330c00ad2d84b6, type: 2}
   - {fileID: 11400000, guid: 25dd9a99a5a6d864e93be1fc8a007295, type: 2}
   m_BuildSettings:
     m_LogResourceManagerExceptions: 1
@@ -104,6 +105,7 @@ MonoBehaviour:
     - UI
     - ChipObject
     - 3D
+    - Particles
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: c82c1f8d9aeb29943a6059ef69a90e2a, type: 2}
