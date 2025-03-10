@@ -27,6 +27,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - 3D
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c2ce78e5115e9b4da4343165f0c4642
+    m_Address: BallHistory
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - 3D
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: accd5ff1f4306434cb4ad4db0e3e443a
     m_Address: Chip3D_05
     m_ReadOnly: 0

@@ -13,6 +13,13 @@ public enum InputState
     Release
 }
 
+public enum PlayerState
+{
+    Pass,
+    Win,
+    Lose
+}
+
 public enum BetType
 {
     Normal,

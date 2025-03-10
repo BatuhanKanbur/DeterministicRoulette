@@ -17,7 +17,8 @@ public class GameManager : HookBehaviour,IManager
     public GameState GameState { set; get; } = GameState.Cheating;
     public int SpinResult {private set; get; }
     public ChipObject[] ChipObjects { get; private set;}
-    private List<Bet> _bets = new List<Bet>();
+    private readonly List<Bet> _bets = new List<Bet>();
+    private List<int> _oldNumbers { get; } = new();
 
     #endregion
 
@@ -27,6 +28,8 @@ public class GameManager : HookBehaviour,IManager
     public Action<int> OnEarnedMoneyChanged;
     public Action<int> OnTotalBetChanged;
     public Action<GameState> OnGameStateChanged;
+    public Action<PlayerState,int> OnTurnCompleted;
+    public Action<List<int>> OnOldNumbersChanged;
     #endregion
 
     #region HookMethods
@@ -98,12 +101,32 @@ public class GameManager : HookBehaviour,IManager
         foreach (var bet in _bets)
         {
             if (bet.BetNumbers.Contains(SpinResult))
+            {
                 earnedMoney += bet.BetValue * bet.BetMultiplier;
+                _ = ObjectManager.GetObject(AssetConstants.GetChipParticleName(bet.BetMultiplier), bet.BetPosition);
+            }
+            else
+            {
+                earnedMoney -= bet.BetValue;
+                _ = ObjectManager.GetObject(AssetConstants.ChipLostParticle01, bet.BetPosition);
+            }
+            bet.Dispose();
         }
-        EarnedMoney = earnedMoney;
+        var playerState = earnedMoney > 0 ? PlayerState.Win : earnedMoney == 0 ? PlayerState.Pass : PlayerState.Lose;
+        EarnedMoney += earnedMoney;
         Money += earnedMoney;
         TotalBet = 0;
         _bets.Clear();
-        GameState = GameState.Result;
+        AddHistoryNumber(SpinResult);
+        await Task.Delay(TimeSpan.FromSeconds(2));
+        OnTurnCompleted?.Invoke(playerState,earnedMoney);
+        GameState = GameState.Idle;
+    }
+    private void AddHistoryNumber(int spinResult)
+    {
+        if(_oldNumbers.Count>16)
+            _oldNumbers.Clear();
+        _oldNumbers.Add(spinResult);
+        OnOldNumbersChanged?.Invoke(_oldNumbers);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public static class TweenManager
@@ -9,6 +10,20 @@ public static class TweenManager
     {
         var newTweenObject = new GameObject("TweenBehaviour");
         _tweenBehaviour = newTweenObject.AddComponent<TweenBehaviour>();
+    }
+    public static async void TweenPunch(this Transform targetObject,float scaleMultiplier = 1.25f,float duration=1f, bool autoClose=false)
+    {
+        var originalScale = targetObject.localScale;
+        targetObject.localScale = Vector3.zero;
+        targetObject.TweenScale(originalScale*scaleMultiplier,duration/2);
+        await Task.Delay(TimeSpan.FromSeconds(duration));
+        targetObject.TweenScale(originalScale,duration/2);
+        await Task.Delay(TimeSpan.FromSeconds(duration));
+        if (!autoClose) return;
+        targetObject.TweenScale(Vector3.zero,duration/2);
+        await Task.Delay(TimeSpan.FromSeconds(duration));
+        targetObject.gameObject.SetActive(false);
+        targetObject.localScale = originalScale;
     }
     public static void TweenMove(this Transform targetObject,TweenDirection targetDirection,float targetValue,float duration=1f, bool easeOut = false)
     {

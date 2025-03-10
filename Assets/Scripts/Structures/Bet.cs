@@ -25,6 +25,7 @@ public class Bet : IDisposable
     {
         if(BetChipObject) return;
         BetChipObject = await ObjectManager.GetObject(_chip3DAssetReferenceGameObject);
+        _ = ObjectManager.GetObject(AssetConstants.ChipDropParticle,BetPosition);
         BetChipObject.gameObject.SetActive(true);
         BetChipObject.transform.position = BetPosition;
         BetChipObject.transform.eulerAngles = BetRotation;

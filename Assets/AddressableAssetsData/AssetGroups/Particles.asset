@@ -34,7 +34,7 @@ MonoBehaviour:
     - Particles
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9515d3c704cc24b49898ab5a0e1e1e3e
-    m_Address: LoseParticle
+    m_Address: LoseParticle_01
     m_ReadOnly: 0
     m_SerializedLabels:
     - Particles

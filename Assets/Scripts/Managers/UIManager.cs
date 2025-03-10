@@ -8,6 +8,8 @@ using static TransformConstants;
 public class UIManager : MonoBehaviour,IManager
 {
     [SerializeField] private TextMeshProUGUI totalBetText,earnedText,totalMoneyText;
+    [SerializeField] private TextMeshProUGUI winText,loseText;
+    [SerializeField] private Transform winPanel,losePanel;
     [SerializeField] private Transform chipLayout,topPanel,bottomPanel;
     [Inject] private GameManager _gameManager;
     [Inject] private TableManager _tableManager;
@@ -21,6 +23,7 @@ public class UIManager : MonoBehaviour,IManager
         _gameManager.OnTotalBetChanged += OnTotalBetChanged;
         _gameManager.OnEarnedMoneyChanged += OnEarnedMoneyChanged;
         _gameManager.OnMoneyChanged += OnMoneyChanged;
+        _gameManager.OnTurnCompleted += ShowResultScene;
     }
     private void OnDisable()
     {
@@ -29,6 +32,7 @@ public class UIManager : MonoBehaviour,IManager
         _gameManager.OnTotalBetChanged -= OnTotalBetChanged;
         _gameManager.OnEarnedMoneyChanged -= OnEarnedMoneyChanged;
         _gameManager.OnMoneyChanged -= OnMoneyChanged;
+        _gameManager.OnTurnCompleted -= ShowResultScene;
     }
     private void UpdateChipsUI()
     {
@@ -67,11 +71,29 @@ public class UIManager : MonoBehaviour,IManager
         SelectedChipObject?.DisposeChip();
         _gameManager.GameState = GameState.Idle;
     }
-
     public void OnSpinButtonClicked()
     {
         if(_gameManager.GameState != GameState.Idle) return;
         _gameManager.StartSpin();
+    }
+
+    private void ShowResultScene(PlayerState playerState, int diffMoney)
+    {
+        switch (playerState)
+        {
+            case PlayerState.Pass:
+                break;
+            case PlayerState.Win:
+                winPanel.gameObject.SetActive(true);
+                winPanel.TweenPunch(1.25f,1,true);
+                winText.text = $"+{diffMoney}";
+                break;
+            case PlayerState.Lose:
+                losePanel.gameObject.SetActive(true);
+                losePanel.TweenPunch(1.25f,1,true);
+                loseText.text = diffMoney.ToString();
+                break;
+        }
     }
     public void SetBetChipObject(Transform hitPoint)
     {
@@ -95,7 +117,8 @@ public class UIManager : MonoBehaviour,IManager
                 bottomPanel.TweenMove(BottomBarBettingPosition);
                 break;
             case GameState.Result:
-                // goto case GameState.Idle;
+                topPanel.TweenMove(TopBarIdlePosition);
+                bottomPanel.TweenMove(BottomBarIdlePosition);
                 break;
         }
     }

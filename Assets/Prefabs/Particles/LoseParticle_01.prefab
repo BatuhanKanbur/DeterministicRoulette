@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8372036814695610387}
   - component: {fileID: 4178375813687361211}
   m_Layer: 0
-  m_Name: LoseParticle
+  m_Name: LoseParticle_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

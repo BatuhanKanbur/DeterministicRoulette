@@ -12,6 +12,8 @@ public class TableManager : MonoBehaviour,IManager
     [SerializeField] private Rigidbody ball;
     private bool _isSpinning,_isSlowingDown;
     private float _currentSpeed,_elapsedTime;
+    [SerializeField] private Transform[] historySpawnPoints;
+    private List<GameObject> _oldNumberList = new List<GameObject>();
     public InsideBetArea[] InsideBetAreas;
     public OutsideBetArea[] OutsideBetAreas;
 
@@ -19,10 +21,12 @@ public class TableManager : MonoBehaviour,IManager
     {
         DIContainer.AutoInject(this);
         _gameManager.OnGameStateChanged += OnGameStateChanged;
+        _gameManager.OnOldNumbersChanged += UpdateHistory;
     }
     private void OnDisable()
     {
         _gameManager.OnGameStateChanged -= OnGameStateChanged;
+        _gameManager.OnOldNumbersChanged -= UpdateHistory;
     }
 
     private void Update()
@@ -38,6 +42,22 @@ public class TableManager : MonoBehaviour,IManager
         {
             _isSlowingDown = true;
             StartCoroutine(SlowDownWheel());
+        }
+    }
+    private async void UpdateHistory(List<int> historyList)
+    {
+        if(historyList.Count < _oldNumberList.Count)
+        {
+            foreach (var oldNumberObject in _oldNumberList)
+                oldNumberObject.SetActive(false);
+            _oldNumberList.Clear();
+        }
+        for (var i = 0; i < historyList.Count; i++)
+        {
+            if (i <= _oldNumberList.Count - 1) continue;
+            var newHistoryBall = await ObjectManager.GetObject(AssetConstants.BallHistoryPrefab, historySpawnPoints[i].position);
+            newHistoryBall.GetComponent<HistoryBall>().Init(historyList[i]);
+            _oldNumberList.Add(newHistoryBall.gameObject);
         }
     }
     private IEnumerator SlowDownWheel()
@@ -58,10 +78,10 @@ public class TableManager : MonoBehaviour,IManager
     private IEnumerator SnapBall()
     {
         ball.isKinematic = false;
-        ball.AddForce(Vector3.up * 15);
-        yield return new WaitForSeconds(1);
+        ball.AddForce(Vector3.up * 25);
+        yield return new WaitForSeconds(0.75f);
         var ballDistance = Vector3.Distance(ball.position, wheelPoints[_gameManager.SpinResult].position);
-        while (ballDistance > 0.01f)
+        while (ballDistance > 0.025f)
         {
             ball.position = Vector3.MoveTowards(ball.position, wheelPoints[_gameManager.SpinResult].position, Time.deltaTime * GameConstants.BallSnapSpeed);
             ballDistance = Vector3.Distance(ball.position, wheelPoints[_gameManager.SpinResult].position);
@@ -93,7 +113,6 @@ public class TableManager : MonoBehaviour,IManager
                 throw new ArgumentOutOfRangeException(nameof(gameState), gameState, null);
         }
     }
-
     public Bet GetBetFromTable(ChipObject chipObject, Transform betPoint)
     {
         var newBetNumbers = new HashSet<int>();
