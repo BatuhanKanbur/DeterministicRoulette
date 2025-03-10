@@ -19,6 +19,14 @@ public class ControllerManager : MonoBehaviour,IManager
         if(inputState == InputState.None) return;
         var clickPosition = GetPosition(inputState);
         var ray = _cameraManager.MainCamera.ScreenPointToRay(clickPosition);
+        if (_gameManager.GameState == GameState.Idle)
+        {
+            if (Physics.Raycast(ray, out var hit, 10, BetChipLayerMask))
+            {
+                Debug.Log(hit.transform.gameObject.name);
+                _gameManager.RemoveBet(hit.transform.gameObject);
+            }
+        }
         if (_gameManager.GameState == GameState.Betting)
         {
             switch (inputState)

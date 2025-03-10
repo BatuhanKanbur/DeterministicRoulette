@@ -95,6 +95,15 @@ public class GameManager : HookBehaviour,IManager
         TotalBet += bet.BetValue;
         Money -= bet.BetValue;
     }
+    public void RemoveBet(GameObject betTransform)
+    {
+        var bet = _bets.FirstOrDefault(b => b.BetChipObject == betTransform);
+        if(bet == null) return;
+        TotalBet -= bet.BetValue;
+        Money += bet.BetValue;
+        bet.Dispose();
+        _bets.Remove(bet);
+    }
 
     public void StartSpin()
     {

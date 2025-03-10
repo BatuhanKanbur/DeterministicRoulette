@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5503156469093193072}
   - component: {fileID: 1138442344368123995}
   - component: {fileID: 8657176619873970405}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Chip3D_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.323, y: -0.186, z: -1.158}
-  m_LocalScale: {x: 0.16948876, y: 0.008828267, z: 0.16948876}
+  m_LocalScale: {x: 0.16948876, y: 0.011918161, z: 0.16948876}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5008618539414620371}
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 5008618539414620371}
   - component: {fileID: 5076161202812422494}
   - component: {fileID: 8112970641323489537}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PriceText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
