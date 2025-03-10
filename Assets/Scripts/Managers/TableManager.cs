@@ -81,7 +81,7 @@ public class TableManager : MonoBehaviour,IManager
         ball.AddForce(Vector3.up * 25);
         yield return new WaitForSeconds(0.75f);
         var ballDistance = Vector3.Distance(ball.position, wheelPoints[_gameManager.SpinResult].position);
-        while (ballDistance > 0.025f)
+        while (ballDistance > 0.05f)
         {
             ball.position = Vector3.MoveTowards(ball.position, wheelPoints[_gameManager.SpinResult].position, Time.deltaTime * GameConstants.BallSnapSpeed);
             ballDistance = Vector3.Distance(ball.position, wheelPoints[_gameManager.SpinResult].position);

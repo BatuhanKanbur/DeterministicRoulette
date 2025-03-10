@@ -9,16 +9,15 @@ public class GameManager : HookBehaviour,IManager
     #region Properties
     [HookVar(nameof(MoneyChanged))]
     public int Money{private set;get;}=-1;
-    [HookVar(nameof(EarnedMoneyChanged))]
-    public int EarnedMoney{private set;get;}=-1;
-    [HookVar(nameof(TotalBetChanged))]
-    public int TotalBet{private set;get;}=-1;
+    [HookVar(nameof(EarnedMoneyChanged))] private int EarnedMoney{ set;get;}=-1;
+    [HookVar(nameof(TotalBetChanged))] private int TotalBet{ set;get;}=-1;
     [HookVar(nameof(GameStateChanged))]
     public GameState GameState { set; get; } = GameState.Cheating;
     public int SpinResult {private set; get; }
     public ChipObject[] ChipObjects { get; private set;}
     private readonly List<Bet> _bets = new List<Bet>();
-    private List<int> _oldNumbers { get; } = new();
+    private List<int> OldNumbers { get; set; } = new();
+    private PlayerData _playerData;
 
     #endregion
 
@@ -48,20 +47,9 @@ public class GameManager : HookBehaviour,IManager
     private void GameStateChanged(GameState oldValue, GameState newValue)
     {
         OnGameStateChanged?.Invoke(newValue);
-        switch (newValue)
-        {
-            case GameState.Cheating:
-                break;
-            case GameState.Idle:
-                break;
-            case GameState.Betting:
-                break;
-            case GameState.Spinning:
-                break;
-            case GameState.Result:
-                SpinCompleted();
-                break;
-        }
+        if(newValue == GameState.Result) 
+            SpinCompleted();
+        SaveData();
     }
     #endregion
     private async void Start()
@@ -71,14 +59,21 @@ public class GameManager : HookBehaviour,IManager
         var chipObjectTasks = ChipObjects.Select(chipObject => chipObject.LoadChipAssets()).ToList();
         await Task.WhenAll(chipObjectTasks);
         OnChipObjectsLoaded?.Invoke();
-        LoadSaveData();
+        LoadData();
     }
-    private void LoadSaveData()
+    private void LoadData()
     {
-        GameState = GameState.Idle;
-        Money = 23000;
-        EarnedMoney = 0;
+        _playerData = SaveLoadSystem.Load<PlayerData>();
+        Money = _playerData.totalMoney;
+        EarnedMoney = _playerData.earnedMoney;
         TotalBet = 0;
+        OldNumbers = _playerData.oldNumbers;
+        OnOldNumbersChanged?.Invoke(OldNumbers);
+        GameState = GameState.Idle;
+    }
+    private void SaveData()
+    {
+        _playerData.UpdateData(Money,EarnedMoney,OldNumbers,0,0);
     }
 
     public void AddBet(Bet bet)
@@ -124,9 +119,9 @@ public class GameManager : HookBehaviour,IManager
     }
     private void AddHistoryNumber(int spinResult)
     {
-        if(_oldNumbers.Count>16)
-            _oldNumbers.Clear();
-        _oldNumbers.Add(spinResult);
-        OnOldNumbersChanged?.Invoke(_oldNumbers);
+        if(OldNumbers.Count>16)
+            OldNumbers.Clear();
+        OldNumbers.Add(spinResult);
+        OnOldNumbersChanged?.Invoke(OldNumbers);
     }
 }
