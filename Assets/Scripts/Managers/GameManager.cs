@@ -8,12 +8,13 @@ public class GameManager : HookBehaviour,IManager
 {
     #region Properties
     [HookVar(nameof(MoneyChanged))]
-    public int Money{private set;get;}=-1;
+    public int Money{ set;get;}=-1;
     [HookVar(nameof(EarnedMoneyChanged))] private int EarnedMoney{ set;get;}=-1;
     [HookVar(nameof(TotalBetChanged))] private int TotalBet{ set;get;}=-1;
     [HookVar(nameof(GameStateChanged))]
     public GameState GameState { set; get; } = GameState.Cheating;
     public int SpinResult {private set; get; }
+    public int CheatNumber {internal set; get; }
     public ChipObject[] ChipObjects { get; private set;}
     private readonly List<Bet> _bets = new List<Bet>();
     private List<int> OldNumbers { get; set; } = new();
@@ -71,9 +72,15 @@ public class GameManager : HookBehaviour,IManager
         OnOldNumbersChanged?.Invoke(OldNumbers);
         GameState = GameState.Idle;
     }
-    private void SaveData()
+
+    internal void SaveData()
     {
         _playerData.UpdateData(Money,EarnedMoney,OldNumbers,0,0);
+    }
+    internal void DeleteSaveData()
+    {
+        SaveLoadSystem.Save(new PlayerData());
+        LoadData();
     }
 
     public void AddBet(Bet bet)
@@ -88,7 +95,7 @@ public class GameManager : HookBehaviour,IManager
     public void StartSpin()
     {
         GameState = GameState.Spinning;
-        SpinResult = UnityEngine.Random.Range(0, 37);
+        SpinResult = CheatNumber != -1 ? CheatNumber : UnityEngine.Random.Range(0, 37);
     }
     private async void SpinCompleted()
     {

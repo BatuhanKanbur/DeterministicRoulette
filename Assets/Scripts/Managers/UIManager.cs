@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour,IManager
     [SerializeField] private TextMeshProUGUI winText,loseText;
     [SerializeField] private Transform winPanel,losePanel;
     [SerializeField] private Transform chipLayout,topPanel,bottomPanel;
+    [SerializeField] private GameObject cheatPanel;
     [Inject] private GameManager _gameManager;
     [Inject] private TableManager _tableManager;
     private ChipObject[] _chipObjects;
@@ -76,6 +77,10 @@ public class UIManager : MonoBehaviour,IManager
         if(_gameManager.GameState != GameState.Idle) return;
         _gameManager.StartSpin();
     }
+    public void OpenCheatPanel()
+    {
+        _gameManager.GameState = GameState.Cheating;
+    }
 
     private void ShowResultScene(PlayerState playerState, int diffMoney)
     {
@@ -104,6 +109,7 @@ public class UIManager : MonoBehaviour,IManager
     }
     private void OnGameStateChanged(GameState gameState)
     {
+        cheatPanel.SetActive(gameState == GameState.Cheating);
         switch (gameState)
         {
             case GameState.Idle:
