@@ -1,77 +1,112 @@
-# DeterministicRoulette
- 
-Game Rules and Steps
-Chip Selection:
-Players select 25, 250, 500, 1000 and 5000 dollar chips to bet on.
-The chips are placed by dragging them to the betting areas on the playing field.
+# 🎰 Deterministic Roulette
 
-Chip Placement on Betting Areas:
-Players drag chips to specific betting areas.
-Bets can be placed on various betting options (for example, odd numbers, colors, 1-18, 19-36, etc.).
+## 📜 Game Rules and Steps
 
-Deleting Bets:
-To delete placed bets, click on the bet fields on the playing field.
-This removes the chips from the betting area.
+### 🎟️ Chip Selection
+- Players can select chips of **25, 250, 500, 1000,** and **5000** dollars.
+- Chips are placed by dragging them to the betting areas on the playing field.
 
-Multipliers:
-Bet multipliers are set according to standard European roulette rules.
-The multipliers vary according to the type of bet the player chooses when placing a bet (for example, for odd number bets the multiplier can be 35:1).
+### 🎯 Chip Placement on Betting Areas
+- Players drag chips to specific betting areas.
+- Bets can be placed on various options, such as:
+  - **Odd/Even numbers**
+  - **Red/Black colors**
+  - **1-18 or 19-36 ranges**
+  - **Straight, Split, Street, Corner, Line, and other European Roulette bets**
 
-Previous Numbers:
-The table displays the numbers and results from previous games.
-This section shows past results that players can refer to when strategizing.
-The previous numbers are listed in a small area in one corner of the table.
+### ❌ Deleting Bets
+- Click on the betting area to remove placed chips.
 
-Game Start:
-After placing their bets, players click on the Start button.
-This starts the game and the ball starts rolling.
+### 🎲 Multipliers
+- Bet multipliers follow **standard European roulette rules**.
+- Example: **Straight-up bets (single number) have a 35:1 payout**.
 
-Cheat Menu:
-In the Cheat menu, numbers can be manually manipulated to change the outcome of the game.
-Players can manually enter a specific number to determine where the ball will land.
+### 🔢 Previous Numbers
+- Displays past game results in a small section of the table.
+- Helps players analyze and strategize based on previous outcomes.
 
-Data Clearing:
-Players can press a button to delete saved data.
-This will clear previous game results and betting data.
+### ▶️ Game Start
+- Players place bets and click the **Start** button.
+- The ball starts rolling, and the game outcome is determined.
 
-Game Results:
-The result of the game determines which number the ball lands on.
-Players receive winnings or losses based on the results of their bets.
+### 🛠️ Cheat Menu
+- Allows manual manipulation of the outcome.
+- Players can **enter a specific number** to set the final result.
 
-Restart:
-After the game has finished, players can start a new game by clicking the Start button again to place new bets.
+### 🧹 Data Clearing
+- A **reset button** clears all previous game results and betting data.
 
-Design Patterns and SOLID Principles
+### 🎯 Game Results
+- The game determines where the ball lands.
+- Players receive winnings or losses based on their bets.
 
-Hook Attribute:
-Description: The Hook Attribute is a structure that listens to changes in variables and automatically calls specific methods when these variables change. It provides a way to track changes and trigger necessary actions whenever a change occurs.
-Usage: This is particularly useful for triggering events or actions when data changes. It follows an event-driven approach, making it easier to manage dynamic data changes in the game.
+### 🔄 Restart
+- After a game ends, players can start a new round by clicking the **Start** button again.
 
-Dependency Injection (DI):
-Description: Dependency Injection is a design principle where dependencies for a component are provided externally rather than hardcoded. Since frameworks like DI cannot be used in your case, you've created a simple Dependency Injection system that also supports additive scene loading, making it extensible and adaptable.
-Usage: DI makes it easier to manage dependencies, improving testability, modularity, and flexibility. Popular DI frameworks such as Zencejt and VContainer could be used to solve such dependency management issues, though they are not used in your case.
+---
 
-AssetManager:
-Description: The AssetManager provides a generic framework for handling Addressables and asset management. It helps in efficient asset loading and memory management.
-Usage: The AssetManager allows dynamic loading and management of assets, making memory usage more efficient and reducing load times. It is a great solution for handling assets in large-scale games, where constant loading and unloading of resources are required.
+## 🏗️ Design Patterns and SOLID Principles
 
-ObjectManager:
-Description: The ObjectManager implements an advanced object pool system that works without the need for a warm-up phase. It allows for the efficient reuse of objects.
-Usage: Object pooling improves performance by reusing frequently used objects instead of creating new ones each time. This is particularly useful for games with dynamically spawning objects, as it reduces the overhead of object instantiation and garbage collection.
+### 🏷️ Hook Attribute
+- **Description**: Listens to variable changes and automatically triggers methods.
+- **Usage**: Useful for handling **event-driven updates** in the game.
 
-SOLID Principles:
-Description: SOLID is a set of five design principles that help create more maintainable, scalable, and testable software. These principles ensure that the software is easy to modify, extend, and maintain.
-Single Responsibility Principle (SRP): A class should have only one responsibility.
-Open/Closed Principle (OCP): Classes should be open for extension but closed for modification.
-Liskov Substitution Principle (LSP): Derived classes should be able to replace base classes without altering the correctness of the program.
-Interface Segregation Principle (ISP): Clients should not be forced to depend on interfaces they do not use.
-Dependency Inversion Principle (DIP): High-level modules should not depend on low-level modules. Both should depend on abstractions.
-Usage: These principles are applied throughout your codebase, including scripts like Bet and Chip, making the software more modular, flexible, and easier to maintain.
+### 🔗 Dependency Injection (DI)
+- **Description**: External dependencies are injected instead of being hardcoded.
+- **Custom Implementation**: Since DI frameworks (e.g., Zencejt, VContainer) are not used, a **custom DI system** was built with support for **additive scene loading**.
+- **Benefits**:
+  - Improves **testability** and **modularity**.
+  - Makes the system more **extensible and flexible**.
 
-TweenManager:
-Description: Since frameworks like DOTween cannot be used, you developed a simple tweening system with support for extending methods. This system can be further extended in the future using UniTask to improve performance and flexibility.
-Usage: This system provides a flexible solution for managing animations and transitions. It can be expanded using UniTask to enhance performance and make tweening operations more efficient.
+### 📦 AssetManager
+- **Description**: Manages **Addressables and asset loading** efficiently.
+- **Usage**:
+  - Handles **dynamic asset loading**.
+  - Optimizes **memory usage** and reduces **load times**.
 
-General Approach:
-Modular and Flexible Systems: The design focuses on modularity and flexibility, which allows for easy extension and maintenance. This makes it easy to add new features or modify existing systems without breaking the overall structure.
-Performance and Efficiency: With features like object pooling and asset management, your system is optimized for performance, reducing load times and memory usage in resource-heavy games.
+### 🔄 ObjectManager
+- **Description**: Implements an **advanced object pooling system** without a warm-up phase.
+- **Usage**:
+  - Reuses objects instead of creating new ones, reducing overhead.
+  - Improves performance in **dynamically spawning elements**.
+
+### 📏 SOLID Principles
+- **S**ingle Responsibility Principle (**SRP**): Each class handles only **one responsibility**.
+- **O**pen/Closed Principle (**OCP**): Classes can be **extended without modification**.
+- **L**iskov Substitution Principle (**LSP**): Derived classes can **replace base classes** seamlessly.
+- **I**nterface Segregation Principle (**ISP**): Clients **only depend on required interfaces**.
+- **D**ependency Inversion Principle (**DIP**): High-level modules rely on **abstractions** instead of low-level details.
+- **Usage**:
+  - Applied throughout the codebase, including **Bet** and **Chip** scripts.
+  - Makes the software **modular, maintainable, and scalable**.
+
+### 🎭 TweenManager
+- **Description**: A custom tweening system (since **DOTween** is not used).
+- **Usage**:
+  - Supports **extending methods**.
+  - Can be improved further using **UniTask** for better performance.
+  - Manages animations and transitions smoothly.
+
+---
+
+## 🎯 General Approach
+✅ **Modular and Flexible Systems**
+- Easy to **extend and maintain**.
+- New features can be added **without breaking existing functionality**.
+
+🚀 **Performance and Efficiency**
+- **Object pooling** and **asset management** optimize **memory usage and performance**.
+- Reduces **load times** in resource-heavy scenarios.
+
+🎮 **Scalable Architecture**
+- Designed to **adapt** to new game mechanics and updates effortlessly.
+
+---
+
+### 📌 Notes
+- This project is built with **Unity**.
+- Uses **Addressables, Object Pooling, and Dependency Injection** for efficient game management.
+- Custom **TweenManager** replaces **third-party tweening libraries**.
+
+👨‍💻 **Happy Coding! 🎲**
+
