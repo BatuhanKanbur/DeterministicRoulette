@@ -53,6 +53,10 @@ public class GameManager : HookBehaviour,IManager
         SaveData();
     }
     #endregion
+
+    #region Fields
+    [Inject] private AudioManager _audioManager;
+    #endregion
     private async void Start()
     {
         DIContainer.AutoInject(this);
@@ -96,9 +100,11 @@ public class GameManager : HookBehaviour,IManager
     {
         GameState = GameState.Spinning;
         SpinResult = CheatNumber != -1 ? CheatNumber : UnityEngine.Random.Range(0, 37);
+        _audioManager.PlaySound(AssetConstants.WheelAudio);
     }
     private async void SpinCompleted()
     {
+        _audioManager.StopSound();
         var earnedMoney = 0;
         foreach (var bet in _bets)
         {
@@ -106,6 +112,7 @@ public class GameManager : HookBehaviour,IManager
             {
                 earnedMoney += bet.BetValue * bet.BetMultiplier;
                 _ = ObjectManager.GetObject(AssetConstants.GetChipParticleName(bet.BetMultiplier), bet.BetPosition);
+                _audioManager.PlaySound(AssetConstants.ChipWinAudio);
             }
             else
             {

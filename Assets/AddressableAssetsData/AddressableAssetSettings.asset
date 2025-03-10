@@ -60,6 +60,7 @@ MonoBehaviour:
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
   - {fileID: 11400000, guid: 0106a8aa9bd99eb439356ec854cc0888, type: 2}
+  - {fileID: 11400000, guid: fa1b05acb00a57b47824186e2e49fd74, type: 2}
   - {fileID: 11400000, guid: 50c89ae590c24c24983cd00e5627068c, type: 2}
   - {fileID: 11400000, guid: cc03b6010e744734f948e032c7eea158, type: 2}
   - {fileID: 11400000, guid: 34ef74b9109bc5d469330c00ad2d84b6, type: 2}
@@ -106,6 +107,7 @@ MonoBehaviour:
     - ChipObject
     - 3D
     - Particles
+    - Audio
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: c82c1f8d9aeb29943a6059ef69a90e2a, type: 2}

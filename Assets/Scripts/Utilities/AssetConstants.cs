@@ -3,6 +3,12 @@ using UnityEngine.AddressableAssets;
 
 public static class AssetConstants
 {
+    public const string WheelAudio = "Wheel";
+    public const string WinAudio = "Win";
+    public const string LoseAudio = "Lose";
+    public const string ChipAudio = "ChipDrop";
+    public const string ChipWinAudio = "ChipWin";
+    public const string UIButtonAudio = "UIButton";
     private const string ChipObjectsLabelName = "ChipObject";
     public const string ChipWinParticle01 = "WinParticle_01";
     public const string ChipWinParticle02 = "WinParticle_02";

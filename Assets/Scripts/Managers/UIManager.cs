@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour,IManager
     [SerializeField] private GameObject cheatPanel;
     [Inject] private GameManager _gameManager;
     [Inject] private TableManager _tableManager;
+    [Inject] private AudioManager _audioManager;
     private ChipObject[] _chipObjects;
     private ChipObject SelectedChipObject { get; set; }
     private void Start()
@@ -57,6 +58,7 @@ public class UIManager : MonoBehaviour,IManager
     private void OnChipClick(ChipObject chipObject)
     {
         if(_gameManager.GameState == GameState.Betting) return;
+        _audioManager.PlaySound(AssetConstants.UIButtonAudio);
         _gameManager.GameState = GameState.Betting;
         SelectedChipObject = chipObject;
         SelectedChipObject.Chip3DSetActive(true);
@@ -67,6 +69,7 @@ public class UIManager : MonoBehaviour,IManager
     }
     public void OnChipDrop()
     {
+        _audioManager.PlaySound(AssetConstants.ChipAudio);
         var oldChipBet = SelectedChipObject?.ChipBet;
         _gameManager.AddBet(oldChipBet);
         SelectedChipObject?.DisposeChip();
@@ -92,11 +95,13 @@ public class UIManager : MonoBehaviour,IManager
                 winPanel.gameObject.SetActive(true);
                 winPanel.TweenPunch(1.25f,1,true);
                 winText.text = $"+{diffMoney}";
+                _audioManager.PlaySound(AssetConstants.WinAudio);
                 break;
             case PlayerState.Lose:
                 losePanel.gameObject.SetActive(true);
                 losePanel.TweenPunch(1.25f,1,true);
                 loseText.text = diffMoney.ToString();
+                _audioManager.PlaySound(AssetConstants.LoseAudio);
                 break;
         }
     }

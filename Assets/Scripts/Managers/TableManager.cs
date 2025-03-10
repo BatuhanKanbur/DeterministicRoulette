@@ -78,7 +78,7 @@ public class TableManager : MonoBehaviour,IManager
     private IEnumerator SnapBall()
     {
         ball.isKinematic = false;
-        ball.AddForce(Vector3.up * 25);
+        InvokeRepeating(nameof(JumpBall), 0, 1f);
         yield return new WaitForSeconds(0.75f);
         var ballDistance = Vector3.Distance(ball.position, wheelPoints[_gameManager.SpinResult].position);
         while (ballDistance > 0.05f)
@@ -87,8 +87,13 @@ public class TableManager : MonoBehaviour,IManager
             ballDistance = Vector3.Distance(ball.position, wheelPoints[_gameManager.SpinResult].position);
             yield return null;
         }
+        CancelInvoke(nameof(JumpBall));
         ball.isKinematic = true;
         _gameManager.GameState = GameState.Result;
+    }
+    private void JumpBall()
+    {
+        ball.AddForce(Vector3.up * 100);
     }
     private void OnGameStateChanged(GameState gameState)
     {
