@@ -59,8 +59,18 @@ public class HookBehaviour : MonoBehaviour
                     var attr = (HookVar)Attribute.GetCustomAttribute(member, typeof(HookVar));
                     if (!string.IsNullOrEmpty(attr.HookMethod))
                     {
-                        var method = GetType().GetMethod(attr.HookMethod, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                        method?.Invoke(this, new object[] { _hookValues[member], currentValue });
+                        var eventInfo = GetType().GetRuntimeEvent(attr.HookMethod);
+                        if (eventInfo != null)
+                        {
+                            var fieldInfo = GetType().GetField(attr.HookMethod, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                            var eventDelegate = fieldInfo?.GetValue(this) as Delegate;
+                            eventDelegate?.DynamicInvoke(_hookValues[member], currentValue);
+                        }
+                        else
+                        {
+                            var methodInfo = GetType().GetMethod(attr.HookMethod, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                            methodInfo?.Invoke(this, new object[] { _hookValues[member], currentValue }); 
+                        }
                     }
                     _hookValues[member] = currentValue;
                 }

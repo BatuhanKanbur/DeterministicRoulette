@@ -7,44 +7,30 @@ using UnityEngine;
 public class GameManager : HookBehaviour,IManager
 {
     #region Properties
-    [HookVar(nameof(MoneyChanged))]
-    public int Money{ set;get;}=-1;
-    [HookVar(nameof(EarnedMoneyChanged))] private int EarnedMoney{ set;get;}=-1;
-    [HookVar(nameof(TotalBetChanged))] private int TotalBet{ set;get;}=-1;
-    [HookVar(nameof(GameStateChanged))]
-    public GameState GameState { set; get; } = GameState.Cheating;
+    [HookVar(nameof(OnMoneyChanged))] public int Money{ private set;get;}=-1;
+    [HookVar(nameof(OnEarnedMoneyChanged))] private int EarnedMoney{ set;get;}=-1;
+    [HookVar(nameof(OnTotalBetChanged))] private int TotalBet{ set;get;}=-1;
+    [HookVar(nameof(GameStateChanged))] public GameState GameState { private set; get; } = GameState.Cheating;
     public int SpinResult {private set; get; }
     public int CheatNumber {internal set; get; }
     public ChipObject[] ChipObjects { get; private set;}
-    private readonly List<Bet> _bets = new List<Bet>();
+    private readonly List<Bet> _bets = new();
     private List<int> OldNumbers { get; set; } = new();
     private PlayerData _playerData;
 
     #endregion
 
     #region Delegates
-    public Action OnChipObjectsLoaded;
-    public Action<int> OnMoneyChanged;
-    public Action<int> OnEarnedMoneyChanged;
-    public Action<int> OnTotalBetChanged;
-    public Action<GameState> OnGameStateChanged;
-    public Action<PlayerState,int> OnTurnCompleted;
+    public event Action OnChipObjectsLoaded;
+    public event Action<int,int> OnMoneyChanged;
+    public event Action<int,int> OnEarnedMoneyChanged;
+    public event Action<int,int> OnTotalBetChanged;
+    public event Action<GameState> OnGameStateChanged;
+    public event Action<PlayerState,int> OnTurnCompleted;
     public Action<List<int>> OnOldNumbersChanged;
     #endregion
 
     #region HookMethods
-    private void MoneyChanged(int oldValue, int newValue)
-    {
-        OnMoneyChanged?.Invoke(newValue);
-    }
-    private void EarnedMoneyChanged(int oldValue, int newValue)
-    {
-        OnEarnedMoneyChanged?.Invoke(newValue);
-    }
-    private void TotalBetChanged(int oldValue, int newValue)
-    {
-        OnTotalBetChanged?.Invoke(newValue);
-    }
     private void GameStateChanged(GameState oldValue, GameState newValue)
     {
         OnGameStateChanged?.Invoke(newValue);
@@ -85,6 +71,14 @@ public class GameManager : HookBehaviour,IManager
     {
         SaveLoadSystem.Save(new PlayerData());
         LoadData();
+    }
+    internal void SetGameState(GameState gameState)
+    {
+        GameState = gameState;
+    }
+    internal void AddMoney(int amount)
+    {
+        Money += amount;
     }
 
     public void AddBet(Bet bet)

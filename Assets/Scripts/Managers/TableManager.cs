@@ -89,7 +89,7 @@ public class TableManager : MonoBehaviour,IManager
         }
         CancelInvoke(nameof(JumpBall));
         ball.isKinematic = true;
-        _gameManager.GameState = GameState.Result;
+        _gameManager.SetGameState(GameState.Result);
     }
     private void JumpBall()
     {

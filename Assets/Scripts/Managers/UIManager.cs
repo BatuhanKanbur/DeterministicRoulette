@@ -59,7 +59,7 @@ public class UIManager : MonoBehaviour,IManager
     {
         if(_gameManager.GameState == GameState.Betting) return;
         _audioManager.PlaySound(AssetConstants.UIButtonAudio);
-        _gameManager.GameState = GameState.Betting;
+        _gameManager.SetGameState(GameState.Betting);
         SelectedChipObject = chipObject;
         SelectedChipObject.Chip3DSetActive(true);
     }
@@ -73,7 +73,7 @@ public class UIManager : MonoBehaviour,IManager
         var oldChipBet = SelectedChipObject?.ChipBet;
         _gameManager.AddBet(oldChipBet);
         SelectedChipObject?.DisposeChip();
-        _gameManager.GameState = GameState.Idle;
+        _gameManager.SetGameState(GameState.Idle);
     }
     public void OnSpinButtonClicked()
     {
@@ -82,7 +82,7 @@ public class UIManager : MonoBehaviour,IManager
     }
     public void OpenCheatPanel()
     {
-        _gameManager.GameState = GameState.Cheating;
+        _gameManager.SetGameState(GameState.Cheating);
     }
 
     private void ShowResultScene(PlayerState playerState, int diffMoney)
@@ -133,11 +133,11 @@ public class UIManager : MonoBehaviour,IManager
                 break;
         }
     }
-    private void OnEarnedMoneyChanged(int value) => earnedText.TweenText(value.ToString());
-    private void OnMoneyChanged(int value)
+    private void OnEarnedMoneyChanged(int oldValue,int value) => earnedText.TweenText(value.ToString());
+    private void OnMoneyChanged(int oldValue,int value)
     {
         totalMoneyText.TweenText(value.ToString());
         UpdateChipsUI();
     }
-    private void OnTotalBetChanged(int value) => totalBetText.TweenText(value.ToString());
+    private void OnTotalBetChanged(int oldValue,int value) => totalBetText.TweenText(value.ToString());
 }

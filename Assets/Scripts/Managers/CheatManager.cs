@@ -23,12 +23,12 @@ public class CheatManager : MonoBehaviour,IManager
     }
     public void AddMoney()
     {
-         _gameManager.Money += 1000;
+        _gameManager.AddMoney(1000);
     }
     public void SubtractMoney()
     {
         if(_gameManager.Money > 2000)
-            _gameManager.Money -= 1000;
+            _gameManager.AddMoney(-1000);
     }
     public void AddTargetNumber()
     {
