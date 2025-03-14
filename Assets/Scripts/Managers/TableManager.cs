@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class TableManager : MonoBehaviour,IManager
 {
@@ -16,6 +17,7 @@ public class TableManager : MonoBehaviour,IManager
     private List<GameObject> _oldNumberList = new List<GameObject>();
     public InsideBetArea[] InsideBetAreas;
     public OutsideBetArea[] OutsideBetAreas;
+    private Vector3 _ballTargetPosition;
 
     private void Start()
     {
@@ -60,41 +62,100 @@ public class TableManager : MonoBehaviour,IManager
             _oldNumberList.Add(newHistoryBall.gameObject);
         }
     }
+    
     private IEnumerator SlowDownWheel()
     {
+        StartCoroutine(JumpBall());
         var startSpeed = _currentSpeed;
         var time = 0f;
-        StartCoroutine(SnapBall());
+        var wheelOldRotation = wheel.rotation;
+        var totalRotationOffset = startSpeed * GameConstants.SpinSlowdownDuration * GameConstants.SpinRotationMultiplier;
+        var finalWheelRotation = wheel.rotation * Quaternion.Euler(0, 0, -totalRotationOffset);
+        wheel.rotation = finalWheelRotation;
+        _ballTargetPosition = wheelPoints[_gameManager.SpinResult].position;
+        wheel.rotation = wheelOldRotation;
         while (time < GameConstants.SpinSlowdownDuration)
         {
             _currentSpeed = Mathf.Lerp(startSpeed, 0, time / GameConstants.SpinSlowdownDuration);
             wheel.Rotate(0, 0, -_currentSpeed * Time.deltaTime);
-            ballParent.Rotate(0,  _currentSpeed * Time.deltaTime,0);
+            ballParent.Rotate(0, _currentSpeed * Time.deltaTime, 0);
             time += Time.deltaTime;
             yield return null;
         }
         _currentSpeed = 0;
+        StartCoroutine(SnapBall());
     }
-    private IEnumerator SnapBall()
+
+    private IEnumerator JumpBall()
     {
         ball.isKinematic = false;
-        InvokeRepeating(nameof(JumpBall), 0, 1f);
-        yield return new WaitForSeconds(0.75f);
-        var ballDistance = Vector3.Distance(ball.position, wheelPoints[_gameManager.SpinResult].position);
-        while (ballDistance > 0.05f)
-        {
-            ball.position = Vector3.MoveTowards(ball.position, wheelPoints[_gameManager.SpinResult].position, Time.deltaTime * GameConstants.BallSnapSpeed);
-            ballDistance = Vector3.Distance(ball.position, wheelPoints[_gameManager.SpinResult].position);
-            yield return null;
-        }
-        CancelInvoke(nameof(JumpBall));
+        ball.AddForceAtPosition(transform.forward,wheel.position,ForceMode.Impulse);
+        yield return new WaitForSeconds(2);
         ball.isKinematic = true;
+    }
+
+    private IEnumerator SnapBall()
+    {
+        ball.isKinematic = true;
+        var startPos = ball.transform.position;
+        var startPosXZ = new Vector3(startPos.x, 0f, startPos.z);
+        var endPosXZ = new Vector3(_ballTargetPosition.x, 0f, _ballTargetPosition.z);
+        var arcCenter = new Vector3(wheel.position.x, 0f, wheel.position.z);
+        var startRelative = startPosXZ - arcCenter;
+        var endRelative = endPosXZ - arcCenter;
+        var totalAngle = Mathf.Abs(Vector3.SignedAngle(startRelative, endRelative, Vector3.up));
+        var numberOfJumps = (int)totalAngle.RemapClamped(GameConstants.BallNumberOfJumps);
+        var jumpDuration = totalAngle.RemapClamped(GameConstants.BallJumpDuration);
+        var heightFactor = totalAngle.RemapClamped(GameConstants.BallHeightFactor);
+        for (var i = 0; i < numberOfJumps; i++)
+        {
+            var elapsedTime = 0f;
+            var baseYStart = Mathf.Lerp(startPos.y, _ballTargetPosition.y, (float) i / numberOfJumps);
+            var baseYEnd = Mathf.Lerp(startPos.y, _ballTargetPosition.y, (float) (i + 1) / numberOfJumps);
+            if (i == numberOfJumps - 1)
+            {
+                var segmentStartAngle = Mathf.Abs(Mathf.Lerp(0, totalAngle, (float) i / numberOfJumps));
+                var segmentStartPos = arcCenter + Quaternion.AngleAxis(segmentStartAngle, Vector3.up) * startRelative;
+                while (elapsedTime < jumpDuration)
+                {
+                    elapsedTime += Time.deltaTime;
+                    var t = elapsedTime / jumpDuration;
+                    var currentHorizontal =
+                        arcCenter + Vector3.Slerp(segmentStartPos - arcCenter, endPosXZ - arcCenter, t);
+                    var yOffset = Mathf.Sin(Mathf.PI * t) * heightFactor;
+                    var baseY = Mathf.Lerp(baseYStart, baseYEnd, t);
+                    ball.transform.position = new Vector3(currentHorizontal.x, baseY + yOffset, currentHorizontal.z);
+                    yield return null;
+                }
+
+                ball.transform.position = _ballTargetPosition;
+            }
+            else
+            {
+                var segmentStartAngle = Mathf.Lerp(0, totalAngle, (float) i / numberOfJumps);
+                var segmentEndAngle = Mathf.Lerp(0, totalAngle, (float) (i + 1) / numberOfJumps);
+                var segmentStartPos = arcCenter + Quaternion.AngleAxis(segmentStartAngle, Vector3.up) * startRelative;
+                var segmentEndPos = arcCenter + Quaternion.AngleAxis(segmentEndAngle, Vector3.up) * startRelative;
+                while (elapsedTime < jumpDuration)
+                {
+                    elapsedTime += Time.deltaTime;
+                    var t = elapsedTime / jumpDuration;
+                    var currentAngle = Mathf.Lerp(segmentStartAngle, segmentEndAngle, t);
+                    var currentHorizontal = arcCenter + Quaternion.AngleAxis(currentAngle, Vector3.up) * startRelative;
+                    var yOffset = Mathf.Sin(Mathf.PI * t) * heightFactor * (1f - (float) i / numberOfJumps);
+                    var baseY = Mathf.Lerp(baseYStart, baseYEnd, t);
+                    ball.transform.position = new Vector3(currentHorizontal.x, baseY + yOffset, currentHorizontal.z);
+                    yield return null;
+                }
+
+                ball.transform.position = new Vector3(segmentEndPos.x, baseYEnd, segmentEndPos.z);
+            }
+        }
+
+        yield return new WaitForSeconds(2);
         _gameManager.SetGameState(GameState.Result);
     }
-    private void JumpBall()
-    {
-        ball.AddForce(Vector3.up * 100);
-    }
+
     private void OnGameStateChanged(GameState gameState)
     {
         betArea.gameObject.SetActive(gameState == GameState.Betting);
