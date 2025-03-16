@@ -9,6 +9,7 @@ public static class AssetConstants
     public const string ChipAudio = "ChipDrop";
     public const string ChipWinAudio = "ChipWin";
     public const string UIButtonAudio = "UIButton";
+    public const string BallBounceAudio = "BallBounce";
     private const string ChipObjectsLabelName = "ChipObject";
     public const string ChipWinParticle01 = "WinParticle_01";
     public const string ChipWinParticle02 = "WinParticle_02";

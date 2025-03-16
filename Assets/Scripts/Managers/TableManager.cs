@@ -2,15 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class TableManager : MonoBehaviour,IManager
 {
     [Inject] private GameManager _gameManager;
+    [Inject] private AudioManager _audioManager;
     [SerializeField] private Transform[] wheelPoints;
     [SerializeField] private Transform betArea,wheel,ballParent;
     [SerializeField] private Rigidbody ball;
+    [SerializeField] private TextMeshPro currentBetsText;
     private bool _isSpinning,_isSlowingDown;
     private float _currentSpeed,_elapsedTime;
     [SerializeField] private Transform[] historySpawnPoints;
@@ -23,11 +26,22 @@ public class TableManager : MonoBehaviour,IManager
     {
         DIContainer.AutoInject(this);
         _gameManager.OnGameStateChanged += OnGameStateChanged;
+        _gameManager.OnBetsChanged += OnBetsChanged;
         _gameManager.OnOldNumbersChanged += UpdateHistory;
     }
-    private void OnDisable()
+
+    private void OnBetsChanged(List<Bet> betList)
+    {
+        var newFrameText = "";
+        foreach (var bet in betList)
+            newFrameText += GameConstants.GetBetFrameText(bet.BetNumbers, bet.BetMultiplier);
+        currentBetsText.text = newFrameText;
+    }
+
+    private void OnDestroy()
     {
         _gameManager.OnGameStateChanged -= OnGameStateChanged;
+        _gameManager.OnBetsChanged -= OnBetsChanged;
         _gameManager.OnOldNumbersChanged -= UpdateHistory;
     }
 
@@ -112,6 +126,7 @@ public class TableManager : MonoBehaviour,IManager
             var elapsedTime = 0f;
             var baseYStart = Mathf.Lerp(startPos.y, _ballTargetPosition.y, (float) i / numberOfJumps);
             var baseYEnd = Mathf.Lerp(startPos.y, _ballTargetPosition.y, (float) (i + 1) / numberOfJumps);
+            _audioManager.PlaySound(AssetConstants.BallBounceAudio);
             if (i == numberOfJumps - 1)
             {
                 var segmentStartAngle = Mathf.Abs(Mathf.Lerp(0, totalAngle, (float) i / numberOfJumps));
@@ -132,6 +147,7 @@ public class TableManager : MonoBehaviour,IManager
             }
             else
             {
+                _audioManager.PlaySound(AssetConstants.BallBounceAudio);
                 var segmentStartAngle = Mathf.Lerp(0, totalAngle, (float) i / numberOfJumps);
                 var segmentEndAngle = Mathf.Lerp(0, totalAngle, (float) (i + 1) / numberOfJumps);
                 var segmentStartPos = arcCenter + Quaternion.AngleAxis(segmentStartAngle, Vector3.up) * startRelative;
@@ -171,12 +187,10 @@ public class TableManager : MonoBehaviour,IManager
             case GameState.Betting:
                 break;
             case GameState.Spinning:
-                _currentSpeed = UnityEngine.Random.Range(250, 500);
+                _currentSpeed = Random.Range(250, 500);
                 break;
             case GameState.Result:
                 break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(gameState), gameState, null);
         }
     }
     public Bet GetBetFromTable(ChipObject chipObject, Transform betPoint)

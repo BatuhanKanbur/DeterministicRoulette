@@ -9,9 +9,9 @@ public class UIManager : MonoBehaviour,IManager
 {
     [SerializeField] private TextMeshProUGUI totalBetText,earnedText,totalMoneyText;
     [SerializeField] private TextMeshProUGUI winText,loseText;
+    [SerializeField] private GameObject cheatPanel,cheatButton;
     [SerializeField] private Transform winPanel,losePanel;
     [SerializeField] private Transform chipLayout,topPanel,bottomPanel;
-    [SerializeField] private GameObject cheatPanel;
     [Inject] private GameManager _gameManager;
     [Inject] private TableManager _tableManager;
     [Inject] private AudioManager _audioManager;
@@ -27,7 +27,7 @@ public class UIManager : MonoBehaviour,IManager
         _gameManager.OnMoneyChanged += OnMoneyChanged;
         _gameManager.OnTurnCompleted += ShowResultScene;
     }
-    private void OnDisable()
+    private void OnDestroy()
     {
         _gameManager.OnGameStateChanged -= OnGameStateChanged;
         _gameManager.OnChipObjectsLoaded -= UpdateChipsUI;
@@ -80,11 +80,6 @@ public class UIManager : MonoBehaviour,IManager
         if(_gameManager.GameState != GameState.Idle) return;
         _gameManager.StartSpin();
     }
-    public void OpenCheatPanel()
-    {
-        _gameManager.SetGameState(GameState.Cheating);
-    }
-
     private void ShowResultScene(PlayerState playerState, int diffMoney)
     {
         switch (playerState)
@@ -115,6 +110,7 @@ public class UIManager : MonoBehaviour,IManager
     private void OnGameStateChanged(GameState gameState)
     {
         cheatPanel.SetActive(gameState == GameState.Cheating);
+        cheatButton.SetActive(gameState != GameState.Cheating);
         switch (gameState)
         {
             case GameState.Idle:
@@ -132,6 +128,14 @@ public class UIManager : MonoBehaviour,IManager
                 bottomPanel.TweenMove(BottomBarIdlePosition);
                 break;
         }
+    }
+    public void OpenCheatPanel()
+    {
+        _gameManager.SetGameState(GameState.Cheating);
+    }
+    public void CloseChestPanel()
+    {
+        _gameManager.SetGameState(GameState.Idle);
     }
     private void OnEarnedMoneyChanged(int oldValue,int value) => earnedText.TweenText(value.ToString());
     private void OnMoneyChanged(int oldValue,int value)

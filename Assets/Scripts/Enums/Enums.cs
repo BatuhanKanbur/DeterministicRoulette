@@ -5,6 +5,14 @@ public enum GameState
     Betting,
     Spinning,
     Result
+    
+}
+public enum ColorType
+{
+    Number,
+    Red,
+    Black,
+    Green
 }
 public enum InputState
 {

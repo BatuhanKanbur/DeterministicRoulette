@@ -4,12 +4,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CheatUI : MonoBehaviour,ICheatUI
+public class CheatUI : HookBehaviour,ICheatUI
 {
-    [HookVar(nameof(OnValueChanged))] private float Value { get; set; }
+    [HookVar(nameof(OnValueChanged))] private float Value { get; set; } = -1;
     [SerializeField] private Text text;
     [SerializeField] private float minValue, maxValue, additionalValue;
     [SerializeField] private CheatUIType cheatUIType;
+    public float GetValue => Value;
     public event Action<float,float> OnValueChanged;
 
     private void Start() => OnValueChanged += ShowText;

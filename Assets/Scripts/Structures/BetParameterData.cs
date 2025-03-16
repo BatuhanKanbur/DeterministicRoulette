@@ -3,7 +3,7 @@ using System;
 [Serializable]
 public class BetParameterData
 {
-    public int casinoBudget = 10000000;
+    public int casinoBudget = 0;
     public int rewardPoolMoney  = 1000000;
     public int targetSpin  = -1;
     public float greenProbability  = 2.70f;

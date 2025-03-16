@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Sounds
   m_GUID: 29f44f87dc026eb409ff21a2f0fd3c76
   m_SerializeEntries:
+  - m_GUID: 16988b96e1aabab49b42e76e99919ae1
+    m_Address: BallBounce
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Audio
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 64eb74eb6132e8d43b3b124db81dd49b
     m_Address: Wheel
     m_ReadOnly: 0

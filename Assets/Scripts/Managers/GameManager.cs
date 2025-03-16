@@ -12,12 +12,10 @@ public class GameManager : HookBehaviour,IManager
     [HookVar(nameof(OnTotalBetChanged))] private int TotalBet{ set;get;}=-1;
     [HookVar(nameof(GameStateChanged))] public GameState GameState { private set; get; } = GameState.Cheating;
     public int SpinResult {private set; get; }
-    public int CheatNumber {internal set; get; }
     public ChipObject[] ChipObjects { get; private set;}
     private readonly List<Bet> _bets = new();
     private List<int> OldNumbers { get; set; } = new();
     private PlayerData _playerData;
-
     #endregion
 
     #region Delegates
@@ -28,6 +26,7 @@ public class GameManager : HookBehaviour,IManager
     public event Action<GameState> OnGameStateChanged;
     public event Action<PlayerState,int> OnTurnCompleted;
     public Action<List<int>> OnOldNumbersChanged;
+    public Action<List<Bet>> OnBetsChanged;
     #endregion
 
     #region HookMethods
@@ -42,6 +41,7 @@ public class GameManager : HookBehaviour,IManager
 
     #region Fields
     [Inject] private AudioManager _audioManager;
+    [Inject] private BetManager _betManager;
     #endregion
     private async void Start()
     {
@@ -65,7 +65,7 @@ public class GameManager : HookBehaviour,IManager
 
     internal void SaveData()
     {
-        _playerData.UpdateData(Money,EarnedMoney,OldNumbers,0,0);
+        _playerData.UpdateData(Money,EarnedMoney,OldNumbers);
     }
     internal void DeleteSaveData()
     {
@@ -76,16 +76,19 @@ public class GameManager : HookBehaviour,IManager
     {
         GameState = gameState;
     }
-    internal void AddMoney(int amount)
+    
+    internal void SetMoney(int amount)
     {
-        Money += amount;
+        Money = amount;
     }
+    
 
     public void AddBet(Bet bet)
     {
         if(bet == null) return;
         bet.InitChipObject();
         _bets.Add(bet);
+        OnBetsChanged?.Invoke(_bets);
         TotalBet += bet.BetValue;
         Money -= bet.BetValue;
     }
@@ -97,12 +100,13 @@ public class GameManager : HookBehaviour,IManager
         Money += bet.BetValue;
         bet.Dispose();
         _bets.Remove(bet);
+        OnBetsChanged?.Invoke(_bets);
     }
 
     public void StartSpin()
     {
         GameState = GameState.Spinning;
-        SpinResult = CheatNumber != -1 ? CheatNumber : UnityEngine.Random.Range(0, 37);
+        SpinResult = _betManager.GetSpinResult(_bets);
         _audioManager.PlaySound(AssetConstants.WheelAudio);
     }
     private async void SpinCompleted()
@@ -113,7 +117,7 @@ public class GameManager : HookBehaviour,IManager
         {
             if (bet.BetNumbers.Contains(SpinResult))
             {
-                earnedMoney += bet.BetValue * bet.BetMultiplier;
+                earnedMoney += bet.TotalBetValue;
                 _ = ObjectManager.GetObject(AssetConstants.GetChipParticleName(bet.BetMultiplier), bet.BetPosition);
                 _audioManager.PlaySound(AssetConstants.ChipWinAudio);
             }
@@ -131,6 +135,7 @@ public class GameManager : HookBehaviour,IManager
         _bets.Clear();
         AddHistoryNumber(SpinResult);
         await Task.Delay(TimeSpan.FromSeconds(2));
+        OnBetsChanged?.Invoke(_bets);
         OnTurnCompleted?.Invoke(playerState,earnedMoney);
         GameState = GameState.Idle;
     }

@@ -12,50 +12,53 @@ public class BetManager : MonoBehaviour,IManager
     {
         DIContainer.AutoInject(this);
         BetParameterData = SaveLoadSystem.Load<BetParameterData>();
-        _cheatManager.UpdateCheatManagerUI();
     }
 
     public int GetSpinResult(List<Bet> playerBets)
     {
-        var totalBet = playerBets.Sum(bet => bet.BetValue * bet.BetMultiplier);
-        var maxPayout = BetParameterData.rewardPoolMoney - (int)(totalBet * (BetParameterData.returnToPlayer / 100f));
+        var totalBet = playerBets.Sum(bet => bet.TotalBetValue);
+        var maxPayout = BetParameterData.rewardPoolMoney - (int) (totalBet * (BetParameterData.returnToPlayer / 100f));
         var luckyNumbers = Enumerable.Range(0, 37).ToList();
         foreach (var playerBet in playerBets)
         {
             if (!playerBet.IsWinnable(maxPayout))
-                luckyNumbers.RemoveAll(x=>playerBet.BetNumbers.Contains(x));
+                luckyNumbers.RemoveAll(x => playerBet.BetNumbers.Contains(x));
             else
-                maxPayout -= playerBet.BetValue * playerBet.BetMultiplier;
+                maxPayout -= playerBet.TotalBetValue;
         }
+
         var totalProbability = BetParameterData.greenProbability + BetParameterData.redProbability + BetParameterData.blackProbability;
         var randomValue = UnityEngine.Random.Range(0f, totalProbability);
         if (randomValue > BetParameterData.redProbability + BetParameterData.blackProbability)
             luckyNumbers.Remove(0);
-        if(randomValue > BetParameterData.blackProbability && randomValue < BetParameterData.redProbability + BetParameterData.blackProbability)
-            luckyNumbers.RemoveAll(x=>GameConstants.BlackNumbers.Contains(x));
+        if (randomValue > BetParameterData.blackProbability &&
+            randomValue < BetParameterData.redProbability + BetParameterData.blackProbability)
+            luckyNumbers.RemoveAll(x => GameConstants.BlackNumbers.Contains(x));
         else
-            luckyNumbers.RemoveAll(x=>GameConstants.RedNumbers.Contains(x));
-        var spinResult = BetParameterData.targetSpin == -1 ? luckyNumbers[UnityEngine.Random.Range(0, luckyNumbers.Count)] : BetParameterData.targetSpin;
-        var totalMoney = 0;
+            luckyNumbers.RemoveAll(x => GameConstants.RedNumbers.Contains(x));
+        var spinResult = BetParameterData.targetSpin == -1
+            ? luckyNumbers[UnityEngine.Random.Range(0, luckyNumbers.Count)]
+            : BetParameterData.targetSpin;
         var lastCasinoBudget = BetParameterData.casinoBudget;
         var lastRewardPoolMoney = BetParameterData.rewardPoolMoney;
         foreach (var playerBet in playerBets)
         {
             if (playerBet.BetNumbers.Contains(spinResult))
-                totalMoney += playerBet.BetValue * playerBet.BetMultiplier;
+            {
+                lastRewardPoolMoney -= playerBet.BetValue;
+            }
             else
-                totalMoney -= playerBet.BetValue * playerBet.BetMultiplier;
-        }
-        if (totalMoney > 0)
-        {
-            lastCasinoBudget +=(int)(totalMoney * (1 - BetParameterData.returnToPlayer / 100f));
-            lastRewardPoolMoney -= (int)(totalMoney * BetParameterData.returnToPlayer / 100f);
+            {
+                lastRewardPoolMoney +=(int) ExtendedMathf.GetPercentage(playerBet.BetValue, BetParameterData.returnToPlayer);
+                lastCasinoBudget += (int) ExtendedMathf.GetPercentage(playerBet.BetValue, BetParameterData.returnToPlayer,true);
+            }
         }
         SetCasinoBudget(lastCasinoBudget);
         SetRewardPoolMoney(lastRewardPoolMoney);
         SaveLoadSystem.Save(BetParameterData);
         return spinResult;
     }
+
     public void SaveBetParameterData()
     {
         SaveLoadSystem.Save(BetParameterData);

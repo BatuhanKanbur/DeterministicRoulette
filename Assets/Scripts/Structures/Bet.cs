@@ -8,6 +8,7 @@ public class Bet : IDisposable
     public int[] BetNumbers{get;private set;}
     public int BetMultiplier{get;private set;}
     public int BetValue{get;private set;}
+    public int TotalBetValue => BetValue * BetMultiplier;
     public GameObject BetChipObject{get;private set;}
     private AssetReferenceGameObject _chip3DAssetReferenceGameObject;
     public Vector3 BetPosition{get;private set;}
@@ -32,7 +33,7 @@ public class Bet : IDisposable
     }
     public bool IsWinnable(int casinoBudget)
     {
-        return casinoBudget >= BetValue * BetMultiplier;
+        return casinoBudget >= TotalBetValue;
     }
 
     public void Dispose()

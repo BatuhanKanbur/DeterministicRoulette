@@ -15,7 +15,6 @@ public static class SaveLoadSystem
         var encryptedData = isEncrypt ? Encrypt(json) : json;
         var filePath = Path.Combine(Application.persistentDataPath, fileName);
         await File.WriteAllTextAsync(filePath, encryptedData);
-        Debug.Log($"{fileName} saved!");
     }
 
     public static T Load<T>(bool isEncrypt = true,string fileName = null) where T : new()
@@ -26,7 +25,6 @@ public static class SaveLoadSystem
         {
             var encryptedData = File.ReadAllText(filePath);
             var decryptedData = isEncrypt ? Decrypt(encryptedData) : encryptedData;
-            Debug.Log($"{fileName} loaded!");
             return JsonUtility.FromJson<T>(decryptedData);
         }
         Debug.LogWarning($"{fileName} file not found!");

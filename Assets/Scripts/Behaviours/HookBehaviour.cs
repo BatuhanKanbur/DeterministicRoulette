@@ -14,6 +14,8 @@ public class HookBehaviour : MonoBehaviour
 
     private void OnEnable() => InitHookVars();
 
+    private void OnDisable() => _cancellationTokenSource?.Cancel();
+
     private void InitHookVars()
     {
         _updateInterval = (int)(hookUpdateInterval * 1000);
@@ -33,11 +35,9 @@ public class HookBehaviour : MonoBehaviour
                 }
             }
         }
-
         _cancellationTokenSource = new CancellationTokenSource();
         _ = CheckSyncVars(_cancellationTokenSource.Token);
     }
-
     private async Task CheckSyncVars(CancellationToken token)
     {
         try
@@ -55,7 +55,7 @@ public class HookBehaviour : MonoBehaviour
                         PropertyInfo {CanRead: true} property => property.GetValue(this),
                         _ => null
                     };
-                    if (!_hookValues.ContainsKey(member) || Equals(_hookValues[member], currentValue)) continue;
+                    if (!_hookValues.ContainsKey(member) || _hookValues[member].Equals(currentValue)) continue;
                     var attr = (HookVar)Attribute.GetCustomAttribute(member, typeof(HookVar));
                     if (!string.IsNullOrEmpty(attr.HookMethod))
                     {
@@ -78,6 +78,7 @@ public class HookBehaviour : MonoBehaviour
         }
         catch (OperationCanceledException)
         {
+            Debug.Log("CheckSyncVars Task Cancelled");
         }
     }
 }

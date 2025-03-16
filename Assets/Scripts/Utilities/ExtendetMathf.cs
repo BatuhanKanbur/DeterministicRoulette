@@ -3,6 +3,10 @@ using UnityEngine;
 
 public static class ExtendedMathf
 {
+    public static float GetPercentage(this float value, float percentageValue,bool remaining=false)
+    {
+        return remaining ? value - value * percentageValue / 100f : value * percentageValue / 100f;
+    }
     private static double RemapValue(double value, double fMin, double fMax, double tMin, double tMax, bool invert)
     {
         if (invert) (tMin, tMax) = (tMax, tMin);

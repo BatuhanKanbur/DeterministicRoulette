@@ -12,7 +12,7 @@ public class CameraManager : MonoBehaviour,IManager
         DIContainer.AutoInject(this);
         _gameManager.OnGameStateChanged += OnGameStateChanged;
     }
-    private void OnDisable()
+    private void OnDestroy()
     {
         _gameManager.OnGameStateChanged -= OnGameStateChanged;
     }
