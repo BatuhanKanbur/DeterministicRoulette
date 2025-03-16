@@ -30,6 +30,10 @@ public class Bet : IDisposable
         BetChipObject.transform.position = BetPosition;
         BetChipObject.transform.eulerAngles = BetRotation;
     }
+    public bool IsWinnable(int casinoBudget)
+    {
+        return casinoBudget >= BetValue * BetMultiplier;
+    }
 
     public void Dispose()
     {

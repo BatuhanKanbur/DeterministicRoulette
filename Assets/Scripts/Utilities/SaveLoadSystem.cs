@@ -6,29 +6,30 @@ using System.Security.Cryptography;
 
 public static class SaveLoadSystem
 {
-    private const string EncryptionKey = "mysecretkey123456"; // 16 byte
+    private const string EncryptionKey = "mysecretkey123456";
 
-    public static async void Save<T>(T data, string fileName = "gameSave.json")
+    public static async void Save<T>(T data,bool isEncrypt = true, string fileName = null)
     {
+        fileName ??= $"{data.GetType().Name}.json";
         var json = JsonUtility.ToJson(data);
-        var encryptedData = Encrypt(json);
+        var encryptedData = isEncrypt ? Encrypt(json) : json;
         var filePath = Path.Combine(Application.persistentDataPath, fileName);
-        Debug.Log($"Saving to {filePath}");
         await File.WriteAllTextAsync(filePath, encryptedData);
+        Debug.Log($"{fileName} saved!");
     }
 
-    public static T Load<T>(string fileName = "gameSave.json") where T : new()
+    public static T Load<T>(bool isEncrypt = true,string fileName = null) where T : new()
     {
+        fileName ??= $"{typeof(T).Name}.json";
         var filePath = Path.Combine(Application.persistentDataPath, fileName);
-        Debug.Log($"Loading from {filePath}");
         if (File.Exists(filePath))
         {
             var encryptedData = File.ReadAllText(filePath);
-            var decryptedData = Decrypt(encryptedData);
+            var decryptedData = isEncrypt ? Decrypt(encryptedData) : encryptedData;
+            Debug.Log($"{fileName} loaded!");
             return JsonUtility.FromJson<T>(decryptedData);
         }
-
-        Debug.LogWarning("Save file not found!");
+        Debug.LogWarning($"{fileName} file not found!");
         return new T();
     }
 
