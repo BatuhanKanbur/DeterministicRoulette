@@ -26,6 +26,7 @@ using UnityEditor;
 
 namespace Kino
 {
+#if UNITY_EDITOR
     [CanEditMultipleObjects]
     [CustomEditor(typeof(Bloom))]
     public class BloomEditor : Editor
@@ -73,4 +74,7 @@ namespace Kino
             serializedObject.ApplyModifiedProperties();
         }
     }
+    
+    
+#endif
 }
