@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class HookBehaviour : MonoBehaviour
@@ -29,22 +29,23 @@ public class HookBehaviour : MonoBehaviour
                     case FieldInfo field:
                         _hookValues[field] = field.GetValue(this);
                         break;
-                    case PropertyInfo {CanRead: true} property:
+                    case PropertyInfo { CanRead: true } property:
                         _hookValues[property] = property.GetValue(this);
                         break;
                 }
             }
         }
         _cancellationTokenSource = new CancellationTokenSource();
-        _ = CheckSyncVars(_cancellationTokenSource.Token);
+        CheckSyncVars(_cancellationTokenSource.Token).Forget();
     }
-    private async Task CheckSyncVars(CancellationToken token)
+
+    private async UniTaskVoid CheckSyncVars(CancellationToken token)
     {
         try
         {
             while (!token.IsCancellationRequested)
             {
-                await Task.Delay(_updateInterval, token);
+                await UniTask.Delay(_updateInterval, cancellationToken: token);
                 var members = GetType().GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 foreach (var member in members)
                 {
@@ -52,7 +53,7 @@ public class HookBehaviour : MonoBehaviour
                     var currentValue = member switch
                     {
                         FieldInfo field => field.GetValue(this),
-                        PropertyInfo {CanRead: true} property => property.GetValue(this),
+                        PropertyInfo { CanRead: true } property => property.GetValue(this),
                         _ => null
                     };
                     if (!_hookValues.ContainsKey(member) || _hookValues[member].Equals(currentValue)) continue;
@@ -69,7 +70,7 @@ public class HookBehaviour : MonoBehaviour
                         else
                         {
                             var methodInfo = GetType().GetMethod(attr.HookMethod, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                            methodInfo?.Invoke(this, new object[] { _hookValues[member], currentValue }); 
+                            methodInfo?.Invoke(this, new object[] { _hookValues[member], currentValue });
                         }
                     }
                     _hookValues[member] = currentValue;

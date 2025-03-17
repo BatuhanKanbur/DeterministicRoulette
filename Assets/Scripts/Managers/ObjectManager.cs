@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Object = UnityEngine.Object;
@@ -10,7 +10,7 @@ public static class ObjectManager
 {
     private static readonly Dictionary<string, LinkedList<GameObject>> ObjectPool = new();
     private static readonly Dictionary<string, Transform> ObjectParent = new();
-    public static async Task CreatePool(object objectReference, int poolSize)
+    public static async UniTask CreatePool(object objectReference, int poolSize)
     {
         var key = GetKey(objectReference);
         var loadedList = await AssetManager<GameObject>.LoadObjects(objectReference);
@@ -26,7 +26,7 @@ public static class ObjectManager
         {
             for (var i = 0; i < poolSize; i++)
             {
-                var createdObject =  Object.Instantiate(loadedObject, Vector3.one * -100, Quaternion.identity, ObjectParent[key]);
+                var createdObject = Object.Instantiate(loadedObject, Vector3.one * -100, Quaternion.identity, ObjectParent[key]);
                 createdObject.SetActive(false);
                 ObjectPool[key].AddLast(createdObject);
             }
@@ -69,7 +69,7 @@ public static class ObjectManager
                 Object.Destroy(parent.gameObject);
         }
     }
-    private static async Task<GameObject> AddPool(object objectReference, CancellationToken token = default)
+    private static async UniTask<GameObject> AddPool(object objectReference, CancellationToken token = default)
     {
         var key = GetKey(objectReference);
         if (!ObjectPool.ContainsKey(key))
@@ -100,7 +100,7 @@ public static class ObjectManager
         ObjectPool[key].AddLast(createdObject);
         return createdObject;
     }
-    public static async Task<GameObject> GetRandomObject(object objectReference, Vector3? spawnPosition = null, Quaternion? spawnRotation = null)
+    public static async UniTask<GameObject> GetRandomObject(object objectReference, Vector3? spawnPosition = null, Quaternion? spawnRotation = null)
     {
         var key = GetKey(objectReference);
         if (ObjectPool.TryGetValue(key, out var pool) && pool.Count > 0)
@@ -125,7 +125,7 @@ public static class ObjectManager
         newPoolObject.transform.rotation = spawnRotation ?? Quaternion.identity;
         return newPoolObject;
     }
-    public static async Task<GameObject> GetObject(object objectReference, Vector3? spawnPosition = null, Quaternion? spawnRotation = null, CancellationToken token = default)
+    public static async UniTask<GameObject> GetObject(object objectReference, Vector3? spawnPosition = null, Quaternion? spawnRotation = null, CancellationToken token = default)
     {
         var key = GetKey(objectReference);
         if (ObjectPool.TryGetValue(key, out var pool))

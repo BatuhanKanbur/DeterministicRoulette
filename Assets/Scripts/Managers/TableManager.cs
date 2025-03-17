@@ -28,6 +28,7 @@ public class TableManager : MonoBehaviour,IManager
         _gameManager.OnGameStateChanged += OnGameStateChanged;
         _gameManager.OnBetsChanged += OnBetsChanged;
         _gameManager.OnOldNumbersChanged += UpdateHistory;
+        GameConstants.BallStartRotation = ball.transform.localEulerAngles;
     }
 
     private void OnBetsChanged(List<Bet> betList)
@@ -97,15 +98,15 @@ public class TableManager : MonoBehaviour,IManager
             yield return null;
         }
         _currentSpeed = 0;
-        StartCoroutine(SnapBall());
     }
 
     private IEnumerator JumpBall()
     {
         ball.isKinematic = false;
-        ball.AddForceAtPosition(transform.forward,wheel.position,ForceMode.Impulse);
-        yield return new WaitForSeconds(2);
+        ball.AddForce(transform.forward * GameConstants.BallSpeed);
+        yield return new WaitForSeconds(1f);
         ball.isKinematic = true;
+        StartCoroutine(SnapBall());
     }
 
     private IEnumerator SnapBall()
@@ -163,11 +164,10 @@ public class TableManager : MonoBehaviour,IManager
                     ball.transform.position = new Vector3(currentHorizontal.x, baseY + yOffset, currentHorizontal.z);
                     yield return null;
                 }
-
                 ball.transform.position = new Vector3(segmentEndPos.x, baseYEnd, segmentEndPos.z);
             }
         }
-
+        _audioManager.StopSound();
         yield return new WaitForSeconds(2);
         _gameManager.SetGameState(GameState.Result);
     }
@@ -183,6 +183,7 @@ public class TableManager : MonoBehaviour,IManager
                 _isSlowingDown = false;
                 _currentSpeed = 0;
                 ball.transform.localPosition = GameConstants.BallStartPosition;
+                ball.transform.localEulerAngles = GameConstants.BallStartRotation;
                 break;
             case GameState.Betting:
                 break;
