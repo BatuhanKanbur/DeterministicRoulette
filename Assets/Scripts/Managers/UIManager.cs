@@ -110,7 +110,7 @@ public class UIManager : MonoBehaviour,IManager
     private void OnGameStateChanged(GameState gameState)
     {
         cheatPanel.SetActive(gameState == GameState.Cheating);
-        cheatButton.SetActive(gameState != GameState.Cheating);
+        cheatButton.SetActive(gameState == GameState.Idle);
         switch (gameState)
         {
             case GameState.Idle:

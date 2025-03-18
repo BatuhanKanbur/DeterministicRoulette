@@ -117,7 +117,7 @@ public class TableManager : MonoBehaviour,IManager
         var startPos = ball.transform.position;
         var startPosXZ = new Vector3(startPos.x, 0f, startPos.z);
         var endPosXZ = new Vector3(_ballTargetPosition.x, 0f, _ballTargetPosition.z);
-        var arcCenter = new Vector3(wheel.position.x, 0f, wheel.position.z);
+        var arcCenter = new Vector3(ballParent.position.x, 0f, ballParent.position.z);
         var startRelative = startPosXZ - arcCenter;
         var endRelative = endPosXZ - arcCenter;
         var totalAngle = Mathf.Abs(Vector3.SignedAngle(startRelative, endRelative, Vector3.up));

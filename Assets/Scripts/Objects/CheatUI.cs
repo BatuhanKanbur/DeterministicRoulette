@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CheatUI : HookBehaviour,ICheatUI
 {
-    [HookVar(nameof(OnValueChanged))] private float Value { get; set; } = -1;
+    [HookVar(nameof(OnValueChanged))] private float Value { get; set; } = -2;
     [SerializeField] private Text text;
     [SerializeField] private float minValue, maxValue, additionalValue;
     [SerializeField] private CheatUIType cheatUIType;

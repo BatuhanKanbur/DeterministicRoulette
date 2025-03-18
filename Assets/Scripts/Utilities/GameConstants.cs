@@ -14,9 +14,9 @@ public static class GameConstants
     public const float SpinDuration = 3f;
     public const float SpinSlowdownDuration = 1.5f;
     public const float SpinRotationMultiplier = 0.5f;
-    public static readonly Vector4 BallNumberOfJumps = new Vector4(0, 360, 1, 7);
-    public static readonly Vector4 BallJumpDuration = new Vector4(0, 360, 0.25f,1f);
-    public static readonly Vector4 BallHeightFactor = new Vector4(0, 360, 0.15f, 0.25f);
+    public static readonly Vector4 BallNumberOfJumps = new Vector4(0, 360, 2, 7);
+    public static readonly Vector4 BallJumpDuration = new Vector4(0, 360, 0.25f,1.25f);
+    public static readonly Vector4 BallHeightFactor = new Vector4(0, 360, 0.15f, 0.5f);
     public static readonly Vector3 BallStartPosition = new Vector3(-0.9f, 0, 0);
     public static Vector3 BallStartRotation;
     public const float BallSpeed = 75f;
