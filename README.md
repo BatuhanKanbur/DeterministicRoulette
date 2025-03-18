@@ -1,4 +1,5 @@
 # 🎰 Deterministic Roulette
+<iframe frameborder="0" src="https://itch.io/embed/3386026" width="552" height="167"><a href="https://batuhankanbur.itch.io/deterministicroulette">Deterministic Roulette by BatuhanKanbur</a></iframe>
 
 ## 📜 Game Rules and Steps
 
