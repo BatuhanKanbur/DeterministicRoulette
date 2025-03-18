@@ -6,26 +6,33 @@ using System.Security.Cryptography;
 
 public static class SaveLoadSystem
 {
-    private const string EncryptionKey = "mysecretkey123456";
-
-    public static async void Save<T>(T data,bool isEncrypt = true, string fileName = null)
+    public static void Save<T>(T data, bool isEncrypt = true, string fileName = null)
     {
         fileName ??= $"{data.GetType().Name}.json";
         var json = JsonUtility.ToJson(data);
         var encryptedData = isEncrypt ? Encrypt(json) : json;
         var filePath = Path.Combine(Application.persistentDataPath, fileName);
-        await File.WriteAllTextAsync(filePath, encryptedData);
+        using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+        using (var writer = new StreamWriter(stream))
+        {
+            writer.Write(encryptedData);
+        }
     }
 
-    public static T Load<T>(bool isEncrypt = true,string fileName = null) where T : new()
+    public static T Load<T>(bool isEncrypt = true, string fileName = null) where T : new()
     {
         fileName ??= $"{typeof(T).Name}.json";
         var filePath = Path.Combine(Application.persistentDataPath, fileName);
+
         if (File.Exists(filePath))
         {
-            var encryptedData = File.ReadAllText(filePath);
-            var decryptedData = isEncrypt ? Decrypt(encryptedData) : encryptedData;
-            return JsonUtility.FromJson<T>(decryptedData);
+            using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var reader = new StreamReader(stream))
+            {
+                var encryptedData = reader.ReadToEnd();
+                var decryptedData = isEncrypt ? Decrypt(encryptedData) : encryptedData;
+                return JsonUtility.FromJson<T>(decryptedData);
+            }
         }
         Debug.LogWarning($"{fileName} file not found!");
         return new T();
@@ -35,18 +42,17 @@ public static class SaveLoadSystem
     {
         using var aesAlg = Aes.Create();
         aesAlg.Key = new byte[16];
-        Array.Copy(Encoding.UTF8.GetBytes(EncryptionKey),
+        Array.Copy(Encoding.UTF8.GetBytes(GameConstants.EncryptionKey),
             aesAlg.Key,
-            Math.Min(EncryptionKey.Length, aesAlg.Key.Length));
+            Math.Min(GameConstants.EncryptionKey.Length, aesAlg.Key.Length));
         aesAlg.IV = new byte[16];
-        var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
         using var msEncrypt = new MemoryStream();
+        using (var encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV))
         using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+        using (var swEncrypt = new StreamWriter(csEncrypt))
         {
-            using (var swEncrypt = new StreamWriter(csEncrypt))
-            {
-                swEncrypt.Write(data);
-            }
+            swEncrypt.Write(data);
         }
 
         return Convert.ToBase64String(msEncrypt.ToArray());
@@ -56,14 +62,17 @@ public static class SaveLoadSystem
     {
         using var aesAlg = Aes.Create();
         aesAlg.Key = new byte[16];
-        Array.Copy(Encoding.UTF8.GetBytes(EncryptionKey),
+        Array.Copy(Encoding.UTF8.GetBytes(GameConstants.EncryptionKey),
             aesAlg.Key,
-            Math.Min(EncryptionKey.Length, aesAlg.Key.Length));
+            Math.Min(GameConstants.EncryptionKey.Length, aesAlg.Key.Length));
         aesAlg.IV = new byte[16];
-        var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
         using var msDecrypt = new MemoryStream(Convert.FromBase64String(data));
-        using var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read);
-        using var srDecrypt = new StreamReader(csDecrypt);
-        return srDecrypt.ReadToEnd();
+        using (var decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV))
+        using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+        using (var srDecrypt = new StreamReader(csDecrypt))
+        {
+            return srDecrypt.ReadToEnd();
+        }
     }
 }

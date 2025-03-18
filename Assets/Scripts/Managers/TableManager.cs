@@ -29,6 +29,7 @@ public class TableManager : MonoBehaviour,IManager
         _gameManager.OnBetsChanged += OnBetsChanged;
         _gameManager.OnOldNumbersChanged += UpdateHistory;
         GameConstants.BallStartRotation = ball.transform.localEulerAngles;
+        currentBetsText.text = GameConstants.BetTableEmptyText;
     }
 
     private void OnBetsChanged(List<Bet> betList)
@@ -36,6 +37,7 @@ public class TableManager : MonoBehaviour,IManager
         var newFrameText = "";
         foreach (var bet in betList)
             newFrameText += GameConstants.GetBetFrameText(bet.BetNumbers, bet.BetMultiplier);
+        if(string.IsNullOrEmpty(newFrameText)) newFrameText = GameConstants.BetTableEmptyText;
         currentBetsText.text = newFrameText;
     }
 
@@ -166,6 +168,13 @@ public class TableManager : MonoBehaviour,IManager
                 }
                 ball.transform.position = new Vector3(segmentEndPos.x, baseYEnd, segmentEndPos.z);
             }
+        }
+        var ballTargetDistance = Vector3.Distance(ball.transform.position, _ballTargetPosition);
+        while (ballTargetDistance > 0.01f)
+        {
+            ball.transform.position = Vector3.Lerp(ball.transform.position, _ballTargetPosition, Time.deltaTime);
+            ballTargetDistance = Vector3.Distance(ball.transform.position, _ballTargetPosition);
+            yield return null;
         }
         _audioManager.StopSound();
         yield return new WaitForSeconds(2);

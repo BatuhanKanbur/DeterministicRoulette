@@ -166,5 +166,9 @@ public class CheatManager : MonoBehaviour,IManager
     }
     
     private void DeleteSaveData() => _gameManager.DeleteSaveData();
-    private void ResetBetParameter() => _betManager.ResetBetParameterData();
+    private void ResetBetParameter()
+    {
+        _betManager.ResetBetParameterData();
+        UpdateCheatManagerUI();
+    }
 }

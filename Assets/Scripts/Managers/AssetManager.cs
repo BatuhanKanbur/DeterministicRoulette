@@ -39,6 +39,7 @@ public static class AssetManager<T> where T : Object
 
     public static async UniTask<T> LoadObject(object assetReference)
     {
+        await Addressables.InitializeAsync(false);
         if (AssetCache.TryGetValue(assetReference, out var assetObject))
             return (T) assetObject;
         
@@ -56,6 +57,7 @@ public static class AssetManager<T> where T : Object
 
     public static async UniTask<List<T>> LoadObjects(object assetReference)
     {
+        await Addressables.InitializeAsync(false);
         if (AssetCache.TryGetValue(assetReference, out var assetObject))
             return (List<T>) assetObject;
         
