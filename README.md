@@ -1,12 +1,10 @@
-<div align="center">
 # 🎰 Deterministic Roulette
-</div>
 <div align="center">
   <img src="https://s6.gifyu.com/images/bzzdF.gif" alt="Game Preview" width="640">
 </div>
 <p align="center">
   <a href="https://batuhankanbur.itch.io/deterministicroulette" target="_blank">
-    <img src="https://img.shields.io/badge/PLAY-%2300bfff?style=for-the-badge&logo=playstation&logoColor=white" alt="Play Button">
+    <img src="https://img.shields.io/badge/PLAY-%2300bfff?style=for-the-badge&logo=playstation&logoColor=white" alt="Play Button" width="300">
   </a>
 </p>
 
