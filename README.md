@@ -1,4 +1,6 @@
 # 🎰 Deterministic Roulette
+<iframe src="https://itch.io/embed/3386026" width="800" height="600" frameborder="0"></iframe>
+
 [Oyunumu oynayın](https://itch.io/embed/3386026)
 
 ## 📜 Game Rules and Steps
