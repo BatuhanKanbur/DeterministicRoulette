@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public static class TweenManager
@@ -16,12 +17,12 @@ public static class TweenManager
         var originalScale = targetObject.localScale;
         targetObject.localScale = Vector3.zero;
         targetObject.TweenScale(originalScale*scaleMultiplier,duration/2);
-        await Task.Delay(TimeSpan.FromSeconds(duration));
+        await UniTask.Delay(TimeSpan.FromSeconds(duration));
         targetObject.TweenScale(originalScale,duration/2);
-        await Task.Delay(TimeSpan.FromSeconds(duration));
+        await UniTask.Delay(TimeSpan.FromSeconds(duration));
         if (!autoClose) return;
         targetObject.TweenScale(Vector3.zero,duration/2);
-        await Task.Delay(TimeSpan.FromSeconds(duration));
+        await UniTask.Delay(TimeSpan.FromSeconds(duration));
         targetObject.gameObject.SetActive(false);
         targetObject.localScale = originalScale;
     }

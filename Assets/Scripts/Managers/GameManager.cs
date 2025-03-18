@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class GameManager : HookBehaviour,IManager
@@ -134,7 +135,7 @@ public class GameManager : HookBehaviour,IManager
         TotalBet = 0;
         _bets.Clear();
         AddHistoryNumber(SpinResult);
-        await Task.Delay(TimeSpan.FromSeconds(2));
+        await UniTask.Delay(TimeSpan.FromSeconds(2));
         OnBetsChanged?.Invoke(_bets);
         OnTurnCompleted?.Invoke(playerState,earnedMoney);
         GameState = GameState.Idle;

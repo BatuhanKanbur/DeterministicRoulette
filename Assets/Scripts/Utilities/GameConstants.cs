@@ -7,9 +7,8 @@ public static class GameConstants
     public const string EncryptionKey = "Developed-By-BatuhanKanbur*09.03.2025";
     public const string BetTableEmptyText = 
         "<align=center>" +
-        "<size=2><b>You haven't bet yet!</b></size>\n" +
-        "<size=1><i>The capital of casinos is math!</i></size>\n-" +
-        "<size=2><b>Sir Batuhan Kanbur</b></size></align>"
+        "\n<size=2><b>You haven't bet yet!</b></size>" +
+        "</align>"
         ;
     public const float SpinDuration = 3f;
     public const float SpinSlowdownDuration = 1.5f;
