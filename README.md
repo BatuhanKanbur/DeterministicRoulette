@@ -1,6 +1,6 @@
 # 🎰 Deterministic Roulette
 
-![Game Preview](https://s6.gifyu.com/images/bzz7U.gif)
+![Game Preview](https://s6.gifyu.com/images/bzzdz.gif)
 
 [**PLAY**](#)
 
