@@ -1,6 +1,8 @@
 # 🎰 Deterministic Roulette
 <div align="center">
-  <img src="https://s6.gifyu.com/images/bzzdF.gif" alt="Game Preview" width="640">
+  <a href="https://batuhankanbur.itch.io/deterministicroulette" target="_blank">
+	<img src="https://s6.gifyu.com/images/bzzdF.gif" alt="Game Preview" width="640">
+  </a>
 </div>
 <p align="center">
   <a href="https://batuhankanbur.itch.io/deterministicroulette" target="_blank">
