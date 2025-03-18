@@ -1,5 +1,7 @@
 # 🎰 Deterministic Roulette
-
+<div align="center">
+  <img src="https://s6.gifyu.com/images/bzzdF.gif" alt="Game Preview" width="640">
+</div>
 ![Game Preview](https://s6.gifyu.com/images/bzzdF.gif)
 
 [**PLAY**](#)
