@@ -1,7 +1,8 @@
 # 🎰 Deterministic Roulette
-<iframe src="https://itch.io/embed/3386026" width="800" height="600" frameborder="0"></iframe>
 
-[Oyunumu oynayın](https://itch.io/embed/3386026)
+![Game Preview](https://s6.gifyu.com/images/bzz7U.gif)
+
+[**PLAY**](#)
 
 ## 📜 Game Rules and Steps
 
@@ -35,6 +36,9 @@
 ### 🛠️ Cheat Menu
 - Allows manual manipulation of the outcome.
 - Players can **enter a specific number** to set the final result.
+- Adjust the probability of **Red, Green, and Black** outcomes.
+- Modify the **Return To Player (RTP) percentage** to control payout rates.
+- Change the **Reward Pool and Casino Budget** dynamically.
 
 ### 🧹 Data Clearing
 - A **reset button** clears all previous game results and betting data.
