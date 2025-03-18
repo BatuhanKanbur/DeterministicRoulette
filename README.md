@@ -4,7 +4,7 @@
 </div>
 <p align="center">
   <a href="https://batuhankanbur.itch.io/deterministicroulette" target="_blank">
-    <img src="https://img.shields.io/badge/PLAY-%2300bfff?style=for-the-badge&logo=playstation&logoColor=white" alt="Play Button" width="300">
+    <img src="https://s6.gifyu.com/images/bzzlE.png" alt="Play Button" width="150">
   </a>
 </p>
 
